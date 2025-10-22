@@ -6,14 +6,31 @@ export default function HomeScreen({ navigation }) {
   const [listaTarefa, setListaTarefa] = useState([]);
 
   function adicionarTarefa() {
-    if (tarefa.trim() === '') {
+    if (tarefa.trim() === '') { // trim remove os espaços em branco no inicio e no final de uma string
       return;
     }
-    setListaTarefa([...listaTarefa, tarefa]);
+
+    const novaTarefa = {
+      id: listaTarefa.length + 1,
+      nome: tarefa,
+      concluido: false
+    }
+
+    setListaTarefa([...listaTarefa, novaTarefa]);
     setTarefa('');
   }
 
-  function marcarConcluido() {}
+  function marcarConcluido(id) {
+    const novaLista = listaTarefa.map(item => {
+      if(item.id === id) {
+        return{ ...item, concluido: !item.concluido }
+      }
+      return item
+    })
+
+    setListaTarefa(novaLista)
+  }
+
 
   return (
     <View style={styles.container}>
@@ -25,8 +42,11 @@ export default function HomeScreen({ navigation }) {
           keyExtractor={(_, index) => index.toString()}
           renderItem={({ item }) => (
             <View style={styles.taskItemContainer}>
-              <Text style={styles.taskItem}>• {item}</Text>
-              <TouchableOpacity style={styles.button} onPress={marcarConcluido}>
+              <Text style={styles.taskItem}>• {item.nome}</Text>
+              <TouchableOpacity style={[
+                  styles.button, 
+                  item.concluido && { backgroundColor: '#4caf50' }
+                ]} onPress={() => marcarConcluido(item.id)}>
                 <Text style={styles.buttonText}>✅</Text>
               </TouchableOpacity>
             </View>
@@ -54,5 +74,33 @@ export default function HomeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-    
+    container: {
+      flex: 1,
+      backgroundColor: '#161616',
+      padding: 5,
+    },
+    containerLista: {
+      flex: 2,
+      padding: 10,
+    },
+    taskItem: {
+      flex: 1,
+      backgroundColor: '#dedede',
+      padding: 5,
+      borderRadius: 8,
+    },
+    title: {
+      color: '#fff'
+    },
+    taskItemContainer: {
+      flex: 1,
+      flexDirection: 'row',
+      marginTop: 15,
+    },
+    button: {
+      marginLeft: 9,
+      backgroundColor: 'transparent',
+      padding: 6,
+      borderRadius: 5,
+    }
 });
